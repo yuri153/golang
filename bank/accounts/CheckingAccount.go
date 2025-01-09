@@ -1,6 +1,6 @@
 package accounts
 
-import "golang/bank/holders"
+import "bank/holders"
 
 type CheckingAccount struct {
 	Holder                      holders.Holder
