@@ -15,7 +15,7 @@ type Product struct {
 func GetProducts() []Product {
 	db := database.ConnectDataBase()
 
-	produtosDb, err := db.Query("select * from products")
+	produtosDb, err := db.Query("select * from products order by id asc")
 
 	defer db.Close()
 
@@ -65,6 +65,45 @@ func DeleteProduct(id string) {
 	}
 
 	insertProduct.Exec(id)
+
+	defer db.Close()
+}
+
+func GetProduct(id string) Product {
+	db := database.ConnectDataBase()
+
+	productDb, err := db.Query("select id, name, description, price, quantity from products where id = $1", id)
+
+	defer db.Close()
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	product := Product{}
+
+	for productDb.Next() {
+
+		err = productDb.Scan(&product.Id, &product.Name, &product.Description, &product.Price, &product.Quantity)
+
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
+	return product
+}
+
+func UpdateProduct(product Product) {
+	db := database.ConnectDataBase()
+
+	insertProduct, err := db.Prepare("update products set name = $1, description = $2, price = $3, quantity = $4 where id = $5")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	insertProduct.Exec(product.Name, product.Description, product.Price, product.Quantity, product.Id)
 
 	defer db.Close()
 }
