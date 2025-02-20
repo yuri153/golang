@@ -30,3 +30,4 @@ go.work.sum
 # env file
 .env
 log.txt
+/gin-api-rest/postgres-data
