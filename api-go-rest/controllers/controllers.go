@@ -32,3 +32,39 @@ func GetPersonalityById(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(personality)
 }
+
+func CreatePersonality(w http.ResponseWriter, r *http.Request) {
+	var personality models.Personality
+
+	json.NewDecoder(r.Body).Decode(&personality)
+
+	database.DB.Create(&personality)
+
+	json.NewEncoder(w).Encode(personality)
+}
+
+func DeletePersonality(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	personalityId := vars["id"]
+
+	var personality models.Personality
+
+	database.DB.Delete(&personality, personalityId)
+
+	json.NewEncoder(w).Encode(personality)
+}
+
+func UpdatePersonality(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	personalityId := vars["id"]
+
+	var personality models.Personality
+
+	database.DB.First(&personality, personalityId)
+
+	json.NewDecoder(r.Body).Decode(&personality)
+
+	database.DB.Save(&personality)
+
+	json.NewEncoder(w).Encode(personality)
+}
